@@ -226,7 +226,7 @@ function lumpUpdateProbsSelect(what) {
         var [selectedVal, availCount] = lumpRebuildSelect("primary", allStats, availStats);
         var exclude = (selectedVal != 'any') ? [selectedVal] : [];
         console.log({exclude:exclude});
-        lumpRebuildSelect("secondary", allStats, allStats, exclude);
+        lumpRebuildSelect("substat", allStats, allStats, exclude);
         break;
     case "art-rank-select":
         lumpUpdateProbCells("rank", 1, what.value == "any" ? 1 : 6);
@@ -242,10 +242,10 @@ function lumpUpdateProbsSelect(what) {
         var exclude = (what.value != 'any') ? [what.value] : [];
         var allStats = window.lump.dun.artifacts.stats;
         console.log({exclude:exclude});
-        lumpRebuildSelect("secondary", allStats, allStats, exclude);
+        lumpRebuildSelect("substat", allStats, allStats, exclude);
         break;
-    case "art-secondary-select":
-        lumpUpdateProbCells("secondary", 1, what.value == "any" ? 1 : window.lump.dun.nums.primaries);
+    case "art-substat-select":
+        lumpUpdateProbCells("substat", 1, what.value == "any" ? 1 : window.lump.dun.nums.primaries);
         break;
     case "art-multiplier-select":
         lumpUpdateProbCells("multiplier", parseInt(what.value), 1);
@@ -262,14 +262,14 @@ function lumpUpdateProbsSelect(what) {
     var [type, numtype] = lumpGetSelVal("type");
     var [set, numset] = lumpGetSelVal("set");
     var [primary, numprimary] = lumpGetSelVal("primary");
-    var [secondary, numsecondary] = lumpGetSelVal("secondary");
+    var [substat, numsubstat] = lumpGetSelVal("substat");
     var [multiplier, nummultiplier] = lumpGetSelVal("multiplier");
     $("#pt1-type").html(type);
     $("#pt1-rank").html(rank);
     $("#pt1-rarity").html(rarity);
     $("#pt1-set").html(set);
     $("#pt1-primary").html(primary);
-    $("#pt1-secondary").html(secondary);
+    $("#pt1-substat").html(substat);
     multiplier = set == 'any' ? 1 : parseFloat(multiplier);
     var runs = [1,2,3,10,100,1000,10000];
     var probPerLevel = [];
@@ -281,14 +281,14 @@ function lumpUpdateProbsSelect(what) {
         var setProb = (set == 'any' ? 1 : 1/9) * multiplier;
         var primaryProb = primary == 'any' || numprimary == 1 ? 1 : 1/numprimary;
         // console.log({primaryProb:primaryProb,numprimary:numprimary});
-        // The probability of the secondary depends on the probability of the
-        // primary. There are 11 possible stats for the secondary. If the
-        // primary has only one option, then each secondary has a 1/10 chance
+        // The probability of the substat depends on the probability of the
+        // primary. There are 11 possible stats for the substat. If the
+        // primary has only one option, then each substat has a 1/10 chance
         // (one less than 11); however, if the primary has more than one option,
-        // then the probability of getting a SPECIFIC secondary that was not the
+        // then the probability of getting a SPECIFIC substat that was not the
         // primary is the probability of getting one of the primaries
-        var secondaryProb = secondary == 'any' || numprimary == 1 ? 1 : 1/numsecondary;
-        var prob = artProb * typeProb * rankProb * rarityProb * setProb * primaryProb * secondaryProb;
+        var substatProb = substat == 'any' || numprimary == 1 ? 1 : 1/numsubstat;
+        var prob = artProb * typeProb * rankProb * rarityProb * setProb * primaryProb * substatProb;
         probPerLevel[level] = prob;
         html += `<tr style="text-align:right">`;
         html += `<th>${level+1}</th>`;
@@ -298,7 +298,7 @@ function lumpUpdateProbsSelect(what) {
         html += `<td style="text-align:right">${lumpPercent(rarityProb)}</td>`;
         html += `<td style="text-align:right">${lumpPercent(setProb)}</td>`;
         html += `<td style="text-align:right">${lumpPercent(primaryProb)}</td>`;
-        html += `<td style="text-align:right">${lumpPercent(secondaryProb)}</td>`;
+        html += `<td style="text-align:right">${lumpPercent(substatProb)}</td>`;
         for(var i=0; i<runs.length; i++) {
             numRuns = runs[i];
             var runProb = 1 - (1 - prob)**(numRuns);

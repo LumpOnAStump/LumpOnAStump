@@ -27,9 +27,10 @@
           width: 5em;
       }
     </style>
-</script>
-</head>
-<body>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  </head>
+  <body>
   <h1>Probabilities for RSL Stuff (Alpha)</h1>
   <div id="tabs">
     <ul>
@@ -51,7 +52,7 @@
             <th>Rarity</th>
             <th>Set</th>
             <th>Primary Stat</th>
-            <th>Secondary Stat</th>
+            <th>Substat</th>
             <th>Set Multiplier</th>
           </tr>
           <tr>
@@ -134,7 +135,7 @@
                 <option value="RES">RES</option>
                 <option value="SPD">SPD</option>
             </select></td>
-            <td><select id="art-secondary-select" onchange="lumpUpdateProbsSelect(this);">
+            <td><select id="art-substat-select" onchange="lumpUpdateProbsSelect(this);">
                 <option value="any">Any</option>
                 <option value="ACC">ACC</option>
                 <option value="ATK">ATK</option>
@@ -161,7 +162,7 @@
             <td id="art-rarity-num-cell"></td>
             <td id="art-set-num-cell"></td>
             <td id="art-primary-num-cell"></td>
-            <td id="art-secondary-num-cell"></td>
+            <td id="art-substat-num-cell"></td>
             <td id="art-multiplier-num-cell"></td>
           </tr>
         </table>
@@ -268,7 +269,7 @@
           <th id="pt1-rarity">any</th>
           <th id="pt1-set">any</th>
           <th id="pt1-primary">any</th>
-          <th id="pt1-secondary">any</th>
+          <th id="pt1-substat">any</th>
           <th>1</th>
           <th>2</th>
           <th>3</th>
@@ -660,6 +661,22 @@
         </tr>
       </table>
       <div><a href="https://ayumilove.net/raid-shadow-legends-loot-table-and-drop-rates/">Loot Table Drop Rates</a> thanks to <a href="https://ayumilove.net/">AyumiLove</a></div>
+      <div style="width:600px;">
+        <h4>Notes</h4>
+        <h5>General Probabilities of a Roll</h5>
+        <p>In general terms, the probability of getting one specific roll for an artifact is given by:</p>
+        <p style="text-align:center">\({p_{roll}}={p_{art}}\times{p_{type}}\times{p_{rank}}\times{p_{rarity}}\times{p_{set}}\times{p_{prim}}\times{p_{sub}}\)</p>
+        <p>Where \({p_{roll}}\) is the probability for the "target" artifact, \({p_{art}}\) is the probability of getting any artifact at all for a given level, and \({p_{type}}\), \({p_{rank}}\), \({p_{rarity}}\), \({p_{set}}\), \({p_{prim}}\), and \({p_{sub}}\) are the probabilities of getting the desired type, rank, rarity, set, primary stat, and substat respectively.</p>
+        <p>In order to calculate the probability of getting, for example, rank 4 or higher, the probability is given by \(p_{rank}=p_{rank4}+p_{rank5}+p_{rank6}\) for each level. Basically, adding up the row values for rank in the loot table. Similarly for rarity.</p>
+        <h5>Set probabilities</h5>
+        <p>There are really only two options to consider: (1) "any" set, and (2) a specific set. Since each dungeon has exactly 9 possible sets, then "any" has a 100% chance, while any specific set has a \(\frac{1}{9}=\)~11.11% chance.</p>
+        <h5>Substat probabilities</h5>
+        <p>Calculating the probability of getting a target substat is a bit more complicated. There are 11 possible stats, but only 10 are available for substats since 1 gets used as the primary stat. In the simplest case where we know which stat is the primary stat (for Weapon, Helmet, and Shield) or in the case where a specific stat is specified as the primary, we can calculate the probability of a specific substat as follows:</p>
+        <p>Assume that \(p_{sub}\) is the probability of getting a specific stat (e.g., HP) as one of the possible substats and that \( n \) is the number of possible stats available and \( i \) is the number of possible "slots" for a substat to be rolled for a given rarity. Then, the probability that HP will show up as one of ths 4 possible substats (Legendary and Mythic have 4 slots) is given by:</p>
+        <p style="text-align:center">\(p_{sub}=\frac{1}{n}+\frac{1}{n-1}+\frac{1}{n-2}+ ... \frac{1}{n-i}=\sum_{j=0}^i{\frac{1}{n-i}}\)</p>
+        <p>With this, then, we can also calculate the "rarity or higher" by adding the probabilities up, just like for rank or higher and rarity or higher above.</p>
+        <p>HOWEVER, in the case that the primary stat is "any" but a substat is specified, the the probability needs to take into account that if, for example, "HP" is a target substat but primary is "any" that the case in which "HP" is rolled as a primary is adequately accounted for. Since we can't know if the user would be happy with it as a primary or only wants it as a substat, we don't bother calculating this case. Maybe someday I'll catch this case and either deal with it or throw up an alert.</p>
+      </div>
     </div>
     <div id="tabs-shards">
       <h2>Chances of Getting Champions from Shards</h2>
@@ -807,14 +824,14 @@
       <label class="nowrap" for="primary-defp">DEF %<input type="checkbox" name="primary-defp" id="primary-defp" targets="WHSGCB"></label>
     </fieldset>
     <fieldset>
-      <legend>Secondary Stats</legend>
-      <label class="nowrap" for="secondary-any">ANY<input type="checkbox" name="secondary-any" id="secondary-any" targets="WHSGCB"></label>
-      <label class="nowrap" for="secondary-atk">ATK<input type="checkbox" name="secondary-atk" id="secondary-atk" targets="WHSGCB"></label>
-      <label class="nowrap" for="secondary-atkp">ATK %<input type="checkbox" name="secondary-atkp" id="secondary-atkp" targets="WHSGCB"></label>
-      <label class="nowrap" for="secondary-hp">HP<input type="checkbox" name="secondary-hp" id="secondary-hp" targets="WHSGCB"></label>
-      <label class="nowrap" for="secondary-hpp">HP %<input type="checkbox" name="secondary-hpp" id="secondary-hpp" targets="WHSGCB"></label>
-      <label class="nowrap" for="secondary-def">DEF<input type="checkbox" name="secondary-def" id="secondary-def" targets="WHSGCB"></label>
-      <label class="nowrap" for="secondary-defp">DEF %<input type="checkbox" name="secondary-defp" id="secondary-defp" targets="WHSGCB"></label>
+      <legend>Substat Stats</legend>
+      <label class="nowrap" for="substat-any">ANY<input type="checkbox" name="substat-any" id="substat-any" targets="WHSGCB"></label>
+      <label class="nowrap" for="substat-atk">ATK<input type="checkbox" name="substat-atk" id="substat-atk" targets="WHSGCB"></label>
+      <label class="nowrap" for="substat-atkp">ATK %<input type="checkbox" name="substat-atkp" id="substat-atkp" targets="WHSGCB"></label>
+      <label class="nowrap" for="substat-hp">HP<input type="checkbox" name="substat-hp" id="substat-hp" targets="WHSGCB"></label>
+      <label class="nowrap" for="substat-hpp">HP %<input type="checkbox" name="substat-hpp" id="substat-hpp" targets="WHSGCB"></label>
+      <label class="nowrap" for="substat-def">DEF<input type="checkbox" name="substat-def" id="substat-def" targets="WHSGCB"></label>
+      <label class="nowrap" for="substat-defp">DEF %<input type="checkbox" name="substat-defp" id="substat-defp" targets="WHSGCB"></label>
     </fieldset>
 
     -->
