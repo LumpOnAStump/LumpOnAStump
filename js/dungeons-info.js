@@ -1,8 +1,8 @@
 
-function pugsInit() {
-    window.pugs = window.pugs || {};
+function lumpInit() {
+    window.lump = window.lump || {};
 
-    window.pugs.dun = {
+    window.lump.dun = {
         dungeons: {
             ice: {
                 name: "Ice Golem’s Peak",
@@ -46,13 +46,13 @@ function pugsInit() {
             secondaries: 10,
         }
     };
-    for (const dun in window.pugs.dun.dungeons) {
-        var sets = window.pugs.dun.dungeons[dun].sets.split(",");
-        // console.log(["1",dun, window.pugs.dun.dungeons, window.pugs.dun.dungeons[dun], sets]);
+    for (const dun in window.lump.dun.dungeons) {
+        var sets = window.lump.dun.dungeons[dun].sets.split(",");
+        // console.log(["1",dun, window.lump.dun.dungeons, window.lump.dun.dungeons[dun], sets]);
         for (var i = 0; i < sets.length; i++) {
             var info = sets[i].split(":");
             // console.log(["2",i,sets[i],info]);
-            window.pugs.dun.artifacts.sets[info[0]] = {
+            window.lump.dun.artifacts.sets[info[0]] = {
                 numInSet: parseInt(info[1]),
                 dungeon: dun,
             };
@@ -60,7 +60,7 @@ function pugsInit() {
     }
 
     var transpose = m => m[0].map((x,i) => m.map(x => x[i]));
-    window.pugs.dun.probs = {Normal:{},Hard:{}};
+    window.lump.dun.probs = {Normal:{},Hard:{}};
     var rankprobs = [
         [60.0,40.0,0,0,0,0],
         [30.0,60.0,10.0,0,0,0],
@@ -88,32 +88,32 @@ function pugsInit() {
         [0,0,0,0,69.0,31.0],
         [0,0,0,0,68.0,32.0],
     ];
-    window.pugs.dun.probs.Normal.rank = {1:[],2:[],3:[],4:[],5:[],6:[],any:[],'1+':[],'2+':[],'3+':[],'4+':[],'5+':[],'6+':[],};
+    window.lump.dun.probs.Normal.rank = {1:[],2:[],3:[],4:[],5:[],6:[],any:[],'1+':[],'2+':[],'3+':[],'4+':[],'5+':[],'6+':[],};
     // Initialize rankplus
     for(var level = 0; level< rankprobs.length; level++) {
         for(var rankIdx = 0; rankIdx < 6; rankIdx++) {
-            window.pugs.dun.probs.Normal.rank[`${rankIdx+1}+`][level] = 0;
+            window.lump.dun.probs.Normal.rank[`${rankIdx+1}+`][level] = 0;
         }
     }
     for(var level = 0; level< rankprobs.length; level++) {
         var cumeProb = 0;
         for(var rankIdx = 0; rankIdx < 6; rankIdx++) {
             rankAndLevelProb = parseFloat((rankprobs[level][rankIdx]/100.0).toFixed(4));
-            window.pugs.dun.probs.Normal.rank[rankIdx+1][level] = rankAndLevelProb;
+            window.lump.dun.probs.Normal.rank[rankIdx+1][level] = rankAndLevelProb;
             for(var plusRankIdx = rankIdx + 1; plusRankIdx < 6; plusRankIdx++) {
-                window.pugs.dun.probs.Normal.rank[`${plusRankIdx+1}+`][level] += rankAndLevelProb;
+                window.lump.dun.probs.Normal.rank[`${plusRankIdx+1}+`][level] += rankAndLevelProb;
             }
             cumeProb += rankAndLevelProb;
         }
-        window.pugs.dun.probs.Normal.rank['any'].push(1);
+        window.lump.dun.probs.Normal.rank['any'].push(1);
     }
     // Properly round
     for(var level = 0; level< rankprobs.length; level++) {
         for(var rankIdx = 0; rankIdx < 6; rankIdx++) {
-            window.pugs.dun.probs.Normal.rank[`${rankIdx+1}+`][level] = parseFloat((1 - window.pugs.dun.probs.Normal.rank[`${rankIdx+1}+`][level]).toFixed(4));
+            window.lump.dun.probs.Normal.rank[`${rankIdx+1}+`][level] = parseFloat((1 - window.lump.dun.probs.Normal.rank[`${rankIdx+1}+`][level]).toFixed(4));
         }
     }
-    window.pugs.dun.probs.Normal.rarity = {
+    window.lump.dun.probs.Normal.rarity = {
         Rare:[80.0,80.0,80.0,80.0,80.0,79.0,79.0,79.0,79.0,79.0,77.0,77.0,77.0,77.0,77.0,70.0,70.0,70.0,70.0,67.5,62.0,62.0,57.5,57.5,55],
         Epic:[19.00,19.00,19.00,19.00,19.00,19.50,19.50,19.50,19.50,19.50,20.00,20.00,20.00,20.00,20.00,25.00,25.00,25.00,25.00,25.00,29.00,28.00,31.50,30.50,32],
         Legendary:[1.00,1.00,1.00,1.00,1.00,1.50,1.50,1.50,1.50,1.50,3.00,3.00,3.00,3.00,3.00,5.00,5.00,5.00,5.00,7.50,9.00,10.00,11.00,12.00,13],
@@ -123,7 +123,7 @@ function pugsInit() {
         'Epic+':[],
         'Legendary+':[],
     };
-    var raredata = window.pugs.dun.probs.Normal.rarity;
+    var raredata = window.lump.dun.probs.Normal.rarity;
     for(var i=0; i<25; i++) {
         raredata.Rare[i] = parseFloat((raredata.Rare[i]/100.0).toFixed(4));
         raredata.Epic[i] = parseFloat((raredata.Epic[i]/100.0).toFixed(4));
@@ -134,22 +134,22 @@ function pugsInit() {
         raredata['Legendary+'][i] = raredata.Legendary[i] + raredata.Mythic[i];
         raredata.any[i] =  parseFloat((raredata.Rare[i] + raredata.Epic[i] + raredata.Legendary[i] + raredata.Mythic[i]).toFixed(6));
     }
-    window.pugs.dun.probs.Normal.rarity = raredata;
-    window.pugs.dun.energy = [8,8,8,10,10,10,10,12,12,12,12,14,14,14,14,14,16,16,16,16,18,18,18,18,20];
-    window.pugs.dun.artifactprob = [0.794,0.798,0.802,0.806,0.81,0.814,0.818,0.822,0.826,0.83,0.834,0.838,0.842,0.846,0.85,0.995,0.995,0.995,0.995,0.995,0.995,0.995,0.995,0.995,0.995];
-    console.log(window.pugs.dun);
+    window.lump.dun.probs.Normal.rarity = raredata;
+    window.lump.dun.energy = [8,8,8,10,10,10,10,12,12,12,12,14,14,14,14,14,16,16,16,16,18,18,18,18,20];
+    window.lump.dun.artifactprob = [0.794,0.798,0.802,0.806,0.81,0.814,0.818,0.822,0.826,0.83,0.834,0.838,0.842,0.846,0.85,0.995,0.995,0.995,0.995,0.995,0.995,0.995,0.995,0.995,0.995];
+    console.log(window.lump.dun);
     // console.log($("#tabs-dungeons"));
     $("#art-type-select").val("any").change();
 }
 
-function pugsUpdateProbCells(what, r1, r2) {
+function lumpUpdateProbCells(what, r1, r2) {
     $("#"+what+"-ratio-cell").html(r1 + ":" + r2);
     val = 100*(r1/r2);
     $("#"+what+"-chance-cell").html(val.toFixed(1) + "%");
     return r1/r2;
 }
 
-function pugsRebuildSelect(what, allValues, availValues, exclude=[]) {
+function lumpRebuildSelect(what, allValues, availValues, exclude=[]) {
     var selectId = `#art-${what}-select`;
     var numId = `#art-${what}-num-cell`;
     var selectedVal = $(selectId).find(":selected").val() || 'any';
@@ -176,13 +176,13 @@ function pugsRebuildSelect(what, allValues, availValues, exclude=[]) {
         }
         html += `<option value="${currentVal}"${moreAttribs}>${currentVal}</option>`;
     }
-    // console.log({func:'pugsRebuildSelect 2', what:what,selectedVal:selectedVal,allValues:allValues, availValues:availValues, exclude:exclude});
+    // console.log({func:'lumpRebuildSelect 2', what:what,selectedVal:selectedVal,allValues:allValues, availValues:availValues, exclude:exclude});
     $(`#art-${what}-select`).html(html);
     $(`#art-${what}-num-cell`).html(availCount);
     return [selectedVal, availCount];
 }
 
-function pugsPercent(num) {
+function lumpPercent(num) {
     if(! num) return '-';
     num = num * 100.0;
     if(num >= 99.99) return num.toFixed(0) + '%';
@@ -195,7 +195,7 @@ function pugsPercent(num) {
     return num.toFixed(6) + '%';
 }
 
-function pugsGetSelVal(what) {
+function lumpGetSelVal(what) {
     var select = $(`#art-${what}-select`);
     var val = select.find(":selected").val();
     var numAvail = 0;
@@ -212,58 +212,58 @@ function pugsGetSelVal(what) {
     //     console.log({'this':this,'disabled':$(this).prop("disabled"),value:$(this).value});
     //     if($(this).prop("disabled") && $(this).value != 'any')
     //         numAvail += 1; });
-    // console.log({'func':'pugsGetSelVal',what:what,numAvail:numAvail});
+    // console.log({'func':'lumpGetSelVal',what:what,numAvail:numAvail});
     $(`#art-${what}-num-cell`).html(numAvail);
     return [val ? val : 'any', numAvail];
 }
 
-function pugsUpdateProbsSelect(what) {
+function lumpUpdateProbsSelect(what) {
     switch (what.id) {
     case "art-type-select":
         // Need to "rebuild" the available stats.
-        var allStats =window.pugs.dun.artifacts.stats;
-        var availStats = what.value == "any" ? allStats : window.pugs.dun.artifacts.types[what.value];
-        var [selectedVal, availCount] = pugsRebuildSelect("primary", allStats, availStats);
+        var allStats =window.lump.dun.artifacts.stats;
+        var availStats = what.value == "any" ? allStats : window.lump.dun.artifacts.types[what.value];
+        var [selectedVal, availCount] = lumpRebuildSelect("primary", allStats, availStats);
         var exclude = (selectedVal != 'any') ? [selectedVal] : [];
         console.log({exclude:exclude});
-        pugsRebuildSelect("secondary", allStats, allStats, exclude);
+        lumpRebuildSelect("secondary", allStats, allStats, exclude);
         break;
     case "art-rank-select":
-        pugsUpdateProbCells("rank", 1, what.value == "any" ? 1 : 6);
+        lumpUpdateProbCells("rank", 1, what.value == "any" ? 1 : 6);
         break;
     case "art-rarity-select":
-        pugsUpdateProbCells("rarity", 1, what.value == "any" ? 1 : 4);
+        lumpUpdateProbCells("rarity", 1, what.value == "any" ? 1 : 4);
         break;
     case "art-set-select":
-        pugsUpdateProbCells("set", 1, what.value == "any" ? 1 : 9);
+        lumpUpdateProbCells("set", 1, what.value == "any" ? 1 : 9);
         break;
     case "art-primary-select":
-        pugsUpdateProbCells("primary", 1, what.value == "any" ? 1 : window.pugs.dun.nums.primaries);
+        lumpUpdateProbCells("primary", 1, what.value == "any" ? 1 : window.lump.dun.nums.primaries);
         var exclude = (what.value != 'any') ? [what.value] : [];
-        var allStats = window.pugs.dun.artifacts.stats;
+        var allStats = window.lump.dun.artifacts.stats;
         console.log({exclude:exclude});
-        pugsRebuildSelect("secondary", allStats, allStats, exclude);
+        lumpRebuildSelect("secondary", allStats, allStats, exclude);
         break;
     case "art-secondary-select":
-        pugsUpdateProbCells("secondary", 1, what.value == "any" ? 1 : window.pugs.dun.nums.primaries);
+        lumpUpdateProbCells("secondary", 1, what.value == "any" ? 1 : window.lump.dun.nums.primaries);
         break;
     case "art-multiplier-select":
-        pugsUpdateProbCells("multiplier", parseInt(what.value), 1);
+        lumpUpdateProbCells("multiplier", parseInt(what.value), 1);
         break;
     default:
-        console.log(['pugsUpdateProbsSelect ERROR',what, what.id, what.value]);
+        console.log(['lumpUpdateProbsSelect ERROR',what, what.id, what.value]);
         alert("Doh!");
         break;
     }
     // Fill in the table...
     var html = '';
-    var [rank, numrank] = pugsGetSelVal("rank");
-    var [rarity, numrarity] = pugsGetSelVal("rarity");
-    var [type, numtype] = pugsGetSelVal("type");
-    var [set, numset] = pugsGetSelVal("set");
-    var [primary, numprimary] = pugsGetSelVal("primary");
-    var [secondary, numsecondary] = pugsGetSelVal("secondary");
-    var [multiplier, nummultiplier] = pugsGetSelVal("multiplier");
+    var [rank, numrank] = lumpGetSelVal("rank");
+    var [rarity, numrarity] = lumpGetSelVal("rarity");
+    var [type, numtype] = lumpGetSelVal("type");
+    var [set, numset] = lumpGetSelVal("set");
+    var [primary, numprimary] = lumpGetSelVal("primary");
+    var [secondary, numsecondary] = lumpGetSelVal("secondary");
+    var [multiplier, nummultiplier] = lumpGetSelVal("multiplier");
     $("#pt1-type").html(type);
     $("#pt1-rank").html(rank);
     $("#pt1-rarity").html(rarity);
@@ -273,11 +273,11 @@ function pugsUpdateProbsSelect(what) {
     multiplier = set == 'any' ? 1 : parseFloat(multiplier);
     var runs = [1,2,3,10,100,1000,10000];
     var probPerLevel = [];
-    for(var level = 0; level < window.pugs.dun.probs.Normal.rarity.Rare.length; level ++) {
-        var artProb = window.pugs.dun.artifactprob[level];
+    for(var level = 0; level < window.lump.dun.probs.Normal.rarity.Rare.length; level ++) {
+        var artProb = window.lump.dun.artifactprob[level];
         var typeProb = type == 'any' ? 1 : 1/6;
-        var rankProb = window.pugs.dun.probs.Normal.rank[rank][level];
-        var rarityProb = window.pugs.dun.probs.Normal.rarity[rarity][level];
+        var rankProb = window.lump.dun.probs.Normal.rank[rank][level];
+        var rarityProb = window.lump.dun.probs.Normal.rarity[rarity][level];
         var setProb = (set == 'any' ? 1 : 1/9) * multiplier;
         var primaryProb = primary == 'any' || numprimary == 1 ? 1 : 1/numprimary;
         // console.log({primaryProb:primaryProb,numprimary:numprimary});
@@ -292,17 +292,17 @@ function pugsUpdateProbsSelect(what) {
         probPerLevel[level] = prob;
         html += `<tr style="text-align:right">`;
         html += `<th>${level+1}</th>`;
-        html += `<td style="text-align:right">${pugsPercent(artProb)}</td>`;
-        html += `<td style="text-align:right">${pugsPercent(typeProb)}</td>`;
-        html += `<td style="text-align:right">${pugsPercent(rankProb)}</td>`;
-        html += `<td style="text-align:right">${pugsPercent(rarityProb)}</td>`;
-        html += `<td style="text-align:right">${pugsPercent(setProb)}</td>`;
-        html += `<td style="text-align:right">${pugsPercent(primaryProb)}</td>`;
-        html += `<td style="text-align:right">${pugsPercent(secondaryProb)}</td>`;
+        html += `<td style="text-align:right">${lumpPercent(artProb)}</td>`;
+        html += `<td style="text-align:right">${lumpPercent(typeProb)}</td>`;
+        html += `<td style="text-align:right">${lumpPercent(rankProb)}</td>`;
+        html += `<td style="text-align:right">${lumpPercent(rarityProb)}</td>`;
+        html += `<td style="text-align:right">${lumpPercent(setProb)}</td>`;
+        html += `<td style="text-align:right">${lumpPercent(primaryProb)}</td>`;
+        html += `<td style="text-align:right">${lumpPercent(secondaryProb)}</td>`;
         for(var i=0; i<runs.length; i++) {
             numRuns = runs[i];
             var runProb = 1 - (1 - prob)**(numRuns);
-            html += `<td style="text-align:right">${pugsPercent(runProb)}</td>`;
+            html += `<td style="text-align:right">${lumpPercent(runProb)}</td>`;
         }
         html += '</tr>';
     }
@@ -315,23 +315,23 @@ function pugsUpdateProbsSelect(what) {
             html += `<tr>`;
             html += `<th>${level+1}</th>`;
             html += `<td title="You have approximately a 1 in ${chanceNum.toLocaleString()} chance of getting the target artifact each time you run the dungeon on level ${level+1}">1:${chanceNum.toLocaleString()}</td>`;
-            html += pugsArtResourcesCells(level + 1, 0.5, levelProb);
-            html += pugsArtResourcesCells(level + 1, 0.75, levelProb);
-            html += pugsArtResourcesCells(level + 1, 0.9, levelProb);
+            html += lumpArtResourcesCells(level + 1, 0.5, levelProb);
+            html += lumpArtResourcesCells(level + 1, 0.75, levelProb);
+            html += lumpArtResourcesCells(level + 1, 0.9, levelProb);
             html += `</tr>`;
         }
     }
     $("#art-resource-prob").html(html);
-    // console.log(["pugsUpdateTypeProb", what, what.value, what.id]);
+    // console.log(["lumpUpdateTypeProb", what, what.value, what.id]);
 }
 
-function pugsArtResourcesCells(level, targetProb, levelProb) {
+function lumpArtResourcesCells(level, targetProb, levelProb) {
     if(levelProb) {
         var html = '';
-        var numRuns = pugsRunsForMinProb(targetProb, levelProb);
-        var energyPerRun = window.pugs.dun.energy[level -1];
-        var addText = `to have at least a ${pugsPercent(targetProb)} chance of getting the target artifact on level ${level} of the dungeon.`;
-        var [time, unitshort, units] = pugsFmtSecs(numRuns*30);
+        var numRuns = lumpRunsForMinProb(targetProb, levelProb);
+        var energyPerRun = window.lump.dun.energy[level -1];
+        var addText = `to have at least a ${lumpPercent(targetProb)} chance of getting the target artifact on level ${level} of the dungeon.`;
+        var [time, unitshort, units] = lumpFmtSecs(numRuns*30);
         html += `
 <td
   style="text-align:right;border-left:1px solid black;"
@@ -352,20 +352,20 @@ function pugsArtResourcesCells(level, targetProb, levelProb) {
     return '<td></td><td></td><td></td><td></td>';
 }
 
-function pugsRunsForMinProb(targetProb, probPerRun) {
+function lumpRunsForMinProb(targetProb, probPerRun) {
     return 1 + Math.floor(Math.log(1 - targetProb)/Math.log(1 - probPerRun));
 }
 
-function pugsToFixed(num, len = 2) {
+function lumpToFixed(num, len = 2) {
     return parseFloat(num.toFixed(len));
 }
 
-function pugsFmtSecs(secs) {
-    if(secs >= 31536000) return [pugsToFixed(secs/31536000).toLocaleString(), 'yrs', 'years'];
-    if(secs >= 2629800) return [pugsToFixed(secs/2629800).toLocaleString(), 'mth', 'months'];
-    if(secs >= 604800) return [pugsToFixed(secs/604800).toLocaleString(), 'wks', 'weeks'];
-    if(secs >= 86400) return [pugsToFixed(secs/86400).toLocaleString(), 'day', 'days'];
-    if(secs >= 3600) return [pugsToFixed(secs/3600).toLocaleString(), 'hrs', 'hours'];
-    if(secs >= 60) return [pugsToFixed(secs/60).toLocaleString(), 'min', 'minutes'];
+function lumpFmtSecs(secs) {
+    if(secs >= 31536000) return [lumpToFixed(secs/31536000).toLocaleString(), 'yrs', 'years'];
+    if(secs >= 2629800) return [lumpToFixed(secs/2629800).toLocaleString(), 'mth', 'months'];
+    if(secs >= 604800) return [lumpToFixed(secs/604800).toLocaleString(), 'wks', 'weeks'];
+    if(secs >= 86400) return [lumpToFixed(secs/86400).toLocaleString(), 'day', 'days'];
+    if(secs >= 3600) return [lumpToFixed(secs/3600).toLocaleString(), 'hrs', 'hours'];
+    if(secs >= 60) return [lumpToFixed(secs/60).toLocaleString(), 'min', 'minutes'];
     return [secs.toLocaleString(), 'sec', 'seconds'];
 }
