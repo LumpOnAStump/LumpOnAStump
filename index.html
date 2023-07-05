@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>PUGS Stuff</title>
+    <title>Lumpy Stuff</title>
     <link href="css/tables.css" rel="stylesheet">
     <link href="jq/jquery-ui.css" rel="stylesheet">
     <link href="jq/jquery-ui.structure.css" rel="stylesheet">
@@ -18,7 +18,7 @@
           $( "input" ).checkboxradio();
       } );
       $( document ).ready(function() {
-          pugsInit();
+          lumpInit();
       });
     </script>
     <style>
@@ -30,7 +30,7 @@
 </script>
 </head>
 <body>
-  <h1>Probabilities for PUGS</h1>
+  <h1>Probabilities for RSL Stuff (Alpha)</h1>
   <div id="tabs">
     <ul>
       <li><a href="#tabs-dungeons">Dungeons</a></li>
@@ -56,7 +56,7 @@
           </tr>
           <tr>
             <th>Attributes:</th>
-            <td><select id="art-type-select" onchange="pugsUpdateProbsSelect(this);">
+            <td><select id="art-type-select" onchange="lumpUpdateProbsSelect(this);">
                 <option value="any">Any</option>
                 <option value="Weapon">Weapon</option>
                 <option value="Helmet">Helmet</option>
@@ -65,7 +65,7 @@
                 <option value="Chestplate">Chestplate</option>
                 <option value="Boots">Boots</option>
             </select></td>
-            <td><select id="art-rank-select" onchange="pugsUpdateProbsSelect(this);">
+            <td><select id="art-rank-select" onchange="lumpUpdateProbsSelect(this);">
                 <option value="any" substats="any">Any</option>
                 <option value="1">1★</option>
                 <option value="2">2★</option>
@@ -80,7 +80,7 @@
                 <option value="5+">5★ or higher</option>
                 <option value="6+">6★ or higher</option>
             </select></td>
-            <td><select id="art-rarity-select" onchange="pugsUpdateProbsSelect(this);">
+            <td><select id="art-rarity-select" onchange="lumpUpdateProbsSelect(this);">
                 <option value="any" substats="any">Any</option>
                 <option value="Rare" substats="2" class="rare">Rare</option>
                 <option value="Epic" substats="3" class="epic">Epic</option>
@@ -90,7 +90,7 @@
                 <option value="Epic+" substats="3" class="epic">Epic or higher</option>
                 <option value="Legendary+" substats="4" class="leggo">Legendary or higher</option>
             </select></td>
-            <td><select id="art-set-select" onchange="pugsUpdateProbsSelect(this);">
+            <td><select id="art-set-select" onchange="lumpUpdateProbsSelect(this);">
                 <option value="any" dungeon="any">Any</option>
                 <option value="Accuracy" dungeon="dragon">Accuracy</option>
                 <option value="Avenging" dungeon="dragon">Avenging</option>
@@ -120,7 +120,7 @@
                 <option value="Stun" dungeon="fire">Stun</option>
                 <option value="Toxic" dungeon="dragon">Toxic</option>
             </select></td>
-            <td><select id="art-primary-select" onchange="pugsUpdateProbsSelect(this);">
+            <td><select id="art-primary-select" onchange="lumpUpdateProbsSelect(this);">
                 <option value="any">Any</option>
                 <option value="ACC">ACC</option>
                 <option value="ATK">ATK</option>
@@ -134,7 +134,7 @@
                 <option value="RES">RES</option>
                 <option value="SPD">SPD</option>
             </select></td>
-            <td><select id="art-secondary-select" onchange="pugsUpdateProbsSelect(this);">
+            <td><select id="art-secondary-select" onchange="lumpUpdateProbsSelect(this);">
                 <option value="any">Any</option>
                 <option value="ACC">ACC</option>
                 <option value="ATK">ATK</option>
@@ -148,7 +148,7 @@
                 <option value="RES">RES</option>
                 <option value="SPD">SPD</option>
             </select></td>
-            <td><select id="art-multiplier-select" onchange="pugsUpdateProbsSelect(this);">
+            <td><select id="art-multiplier-select" onchange="lumpUpdateProbsSelect(this);">
                 <option value="1">None</option>
                 <option value="2">2&times;</option>
                 <option value="3">3&times;</option>
