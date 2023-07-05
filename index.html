@@ -1,0 +1,1491 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>PUGS Stuff</title>
+    <link href="css/tables.css" rel="stylesheet">
+    <link href="jq/jquery-ui.css" rel="stylesheet">
+    <link href="jq/jquery-ui.structure.css" rel="stylesheet">
+    <link href="jq/jquery-ui.theme.css" rel="stylesheet">
+    <script src="js/dungeons-info.js"></script>
+    <script src="jq/jquery-3.7.0.min.js"></script>
+    <script src="jq/jquery-ui-1.13.1.min.js"></script>
+    <script>
+      $( function() {
+          $( document ).tooltip();
+          $( "#tabs" ).tabs();
+          $( "input" ).checkboxradio();
+      } );
+      $( document ).ready(function() {
+          pugsInit();
+      });
+    </script>
+    <style>
+      label {
+          display: inline-block;
+          width: 5em;
+      }
+    </style>
+</script>
+</head>
+<body>
+  <h1>Probabilities for PUGS</h1>
+  <div id="tabs">
+    <ul>
+      <li><a href="#tabs-dungeons">Dungeons</a></li>
+      <li><a href="#tabs-shards">Shards</a></li>
+      <li><a href="#tabs-artifacts">Artifacts</a></li>
+      <li><a href="#tabs-accessories">Accessories</a></li>
+      <li><a href="#tabs-potions">Potions</a></li>
+      <li><a href="#tabs-soulstones">Soulstones</a></li>
+    </ul>
+    <div id="tabs-dungeons">
+      <div id="art-dungeons-control">
+        <table class="tdefault">
+          <caption>Select target artifact attributes.</caption>
+          <tr>
+            <td class="blank"></td>
+            <th>Type</th>
+            <th>Rank</th>
+            <th>Rarity</th>
+            <th>Set</th>
+            <th>Primary Stat</th>
+            <th>Secondary Stat</th>
+            <th>Set Multiplier</th>
+          </tr>
+          <tr>
+            <th>Attributes:</th>
+            <td><select id="art-type-select" onchange="pugsUpdateProbsSelect(this);">
+                <option value="any">Any</option>
+                <option value="Weapon">Weapon</option>
+                <option value="Helmet">Helmet</option>
+                <option value="Shield">Shield</option>
+                <option value="Gauntlets">Gauntlets</option>
+                <option value="Chestplate">Chestplate</option>
+                <option value="Boots">Boots</option>
+            </select></td>
+            <td><select id="art-rank-select" onchange="pugsUpdateProbsSelect(this);">
+                <option value="any" substats="any">Any</option>
+                <option value="1">1★</option>
+                <option value="2">2★</option>
+                <option value="3">3★</option>
+                <option value="4">4★</option>
+                <option value="5">5★</option>
+                <option value="6">6★</option>
+                <option value="1+">1★ or higher</option>
+                <option value="2+">2★ or higher</option>
+                <option value="3+">3★ or higher</option>
+                <option value="4+">4★ or higher</option>
+                <option value="5+">5★ or higher</option>
+                <option value="6+">6★ or higher</option>
+            </select></td>
+            <td><select id="art-rarity-select" onchange="pugsUpdateProbsSelect(this);">
+                <option value="any" substats="any">Any</option>
+                <option value="Rare" substats="2" class="rare">Rare</option>
+                <option value="Epic" substats="3" class="epic">Epic</option>
+                <option value="Legendary" substats="4" class="leggo">Legendary</option>
+                <option value="Mythic" substats="4" class="myth">Mythic</option>
+                <option value="Rare+" substats="2" class="rare">Rare or higher</option>
+                <option value="Epic+" substats="3" class="epic">Epic or higher</option>
+                <option value="Legendary+" substats="4" class="leggo">Legendary or higher</option>
+            </select></td>
+            <td><select id="art-set-select" onchange="pugsUpdateProbsSelect(this);">
+                <option value="any" dungeon="any">Any</option>
+                <option value="Accuracy" dungeon="dragon">Accuracy</option>
+                <option value="Avenging" dungeon="dragon">Avenging</option>
+                <option value="Crit Damage" dungeon="fire">Crit Damage</option>
+                <option value="Critical Rate" dungeon="ice">Critical Rate</option>
+                <option value="Curing" dungeon="fire">Curing</option>
+                <option value="Cursed" dungeon="ice">Cursed</option>
+                <option value="Daze" dungeon="dragon">Daze</option>
+                <option value="Defense" dungeon="ice">Defense</option>
+                <option value="Destroy" dungeon="dragon">Destroy</option>
+                <option value="Frenzy" dungeon="fire">Frenzy</option>
+                <option value="Frost" dungeon="dragon">Frost</option>
+                <option value="Fury" dungeon="fire">Fury</option>
+                <option value="Immunity" dungeon="fire">Immunity</option>
+                <option value="Life" dungeon="ice">Life</option>
+                <option value="Lifesteal" dungeon="dragon">Lifesteal</option>
+                <option value="Offense" dungeon="ice">Offense</option>
+                <option value="Provoke" dungeon="ice">Provoke</option>
+                <option value="Reflex" dungeon="ice">Reflex</option>
+                <option value="Regeneration" dungeon="fire">Regeneration</option>
+                <option value="Resistance" dungeon="ice">Resistance</option>
+                <option value="Retaliation" dungeon="ice">Retaliation</option>
+                <option value="Savage" dungeon="fire">Savage</option>
+                <option value="Shield" dungeon="fire">Shield</option>
+                <option value="Speed" dungeon="dragon">Speed</option>
+                <option value="Stalwart" dungeon="dragon">Stalwart</option>
+                <option value="Stun" dungeon="fire">Stun</option>
+                <option value="Toxic" dungeon="dragon">Toxic</option>
+            </select></td>
+            <td><select id="art-primary-select" onchange="pugsUpdateProbsSelect(this);">
+                <option value="any">Any</option>
+                <option value="ACC">ACC</option>
+                <option value="ATK">ATK</option>
+                <option value="ATK%">ATK %</option>
+                <option value="CDMG">C.Dmg</option>
+                <option value="CRTE">C.Rte</option>
+                <option value="DEF">DEF</option>
+                <option value="DEF%">DEF %</option>
+                <option value="HP">HP</option>
+                <option value="HP%">HP %</option>
+                <option value="RES">RES</option>
+                <option value="SPD">SPD</option>
+            </select></td>
+            <td><select id="art-secondary-select" onchange="pugsUpdateProbsSelect(this);">
+                <option value="any">Any</option>
+                <option value="ACC">ACC</option>
+                <option value="ATK">ATK</option>
+                <option value="ATK%">ATK%</option>
+                <option value="CDMG">C.Dmg</option>
+                <option value="CRTE">C.Rte</option>
+                <option value="DEF">DEF</option>
+                <option value="DEF%">DEF%</option>
+                <option value="HP">HP</option>
+                <option value="HP%">HP%</option>
+                <option value="RES">RES</option>
+                <option value="SPD">SPD</option>
+            </select></td>
+            <td><select id="art-multiplier-select" onchange="pugsUpdateProbsSelect(this);">
+                <option value="1">None</option>
+                <option value="2">2&times;</option>
+                <option value="3">3&times;</option>
+            </select></td>
+          </tr>
+          <tr>
+            <th># Options:</th>
+            <td id="art-type-num-cell"></td>
+            <td id="art-rank-num-cell"></td>
+            <td id="art-rarity-num-cell"></td>
+            <td id="art-set-num-cell"></td>
+            <td id="art-primary-num-cell"></td>
+            <td id="art-secondary-num-cell"></td>
+            <td id="art-multiplier-num-cell"></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+      </div>
+      <table class="tdefault">
+        <caption>Resources needed to have X% chance of getting the selected artifact(s)</caption>
+        <colgroup>
+          <col class="odd">
+          <col class="even">
+          <col class="odd">
+          <col class="even">
+          <col class="odd">
+          <col class="even">
+          <col class="odd">
+          <col class="even">
+          <col class="odd">
+          <col class="even">
+          <col class="odd">
+          <col class="even">
+          <col class="odd">
+          <col class="even">
+        </colgroup>
+        <thead>
+          <tr>
+            <th rowspan="2" class="rotatedcell grey">Level</th>
+            <th rowspan="2" class="rotatedcell grey">Chance</th>
+            <th colspan="4">50%</th>
+            <th colspan="4">75%</th>
+            <th colspan="4">90%</th>
+          </tr>
+          <tr>
+            <th># Runs</th>
+            <th>Energy</th>
+            <th>Gems</th>
+            <th>Time</th>
+            <th># Runs</th>
+            <th>Energy</th>
+            <th>Gems</th>
+            <th>Time</th>
+            <th># Runs</th>
+            <th>Energy</th>
+            <th>Gems</th>
+            <th>Time</th>
+          </tr>
+        </thead>
+        <tbody id="art-resource-prob">
+        </tbody>
+      </table>
+      <table class="tdefault">
+        <colgroup>
+          <col class="odd">
+          <col class="even">
+          <col class="odd">
+          <col class="even">
+          <col class="odd">
+          <col class="even">
+          <col class="odd">
+          <col class="even">
+          <col class="odd">
+          <col class="even">
+          <col class="odd">
+          <col class="even">
+          <col class="odd">
+          <col class="even">
+          <col class="odd">
+          <col class="even">
+          <col class="odd">
+          <col class="even">
+          <col class="odd">
+          <col class="even">
+          <col class="odd">
+          <col class="even">
+          <col class="odd">
+          <col class="even">
+          <col class="odd">
+          <col class="even">
+          <col class="odd">
+          <col class="even">
+          <col class="odd">
+          <col class="even">
+          <col class="odd">
+          <col class="even">
+          <col class="odd">
+        </colgroup>
+        <tr>
+          <th rowspan="3" class="rotatedcell grey">Level</th>
+          <th rowspan="3" class="rotatedcell grey">Artifact<br/>Drop Rate</th>
+          <th class="grey" colspan="13">The Probabilities of Getting</th>
+        </tr>
+        <tr>
+          <th>Type</th>
+          <th>Rank</th>
+          <th>Rarity</th>
+          <th>Set</th>
+          <th>1<sup>st</sup> Stat</th>
+          <th>2<sup>nd</sup> Stat</th>
+          <th colspan="18">Target Artifact for # of Runs</th>
+        </tr>
+        <tr>
+          <th id="pt1-type">any</th>
+          <th id="pt1-rank">any</th>
+          <th id="pt1-rarity">any</th>
+          <th id="pt1-set">any</th>
+          <th id="pt1-primary">any</th>
+          <th id="pt1-secondary">any</th>
+          <th>1</th>
+          <th>2</th>
+          <th>3</th>
+          <th>10</th>
+          <th>100</th>
+          <th>1,000</th>
+          <th>10,000</th>
+        </tr>
+        <tbody id="art-prob-table-1">
+        </tbody>
+      </table>
+      <table class="tdefault" cellpadding="0" id="dungeon-info-table">
+        <caption>General Dungeon Information</caption>
+        <tr>
+          <td>Number of sets per dungeon</td>
+          <td id="sets-per-dungeon">9</td>
+        </tr>
+        <tr>
+          <td>Chance of getting a specific set (e.g., lifesteal)</td>
+          <td id="specific-set-chance">11.1%</td>
+        </tr>
+        <tr>
+          <td>Number of artifact types</td>
+          <td id="num-artifact-types">6</td>
+        </tr>
+        <tr>
+          <td>Chance of getting a specific type (e.g., helmet)</td>
+          <td id="specific-type-chance">16.7%</td>
+        </tr>
+      </table>
+      <table class="tdefault2">
+        <colgroup>
+          <col class="odd">
+          <col class="even">
+          <col class="odd">
+          <col class="even">
+          <col class="odd">
+          <col class="even">
+          <col class="odd">
+          <col class="rare">
+          <col class="epic">
+          <col class="leggo">
+          <col class="odd">
+        </colgroup>
+        <tr>
+          <th rowspan="3" class="rotatedcell grey">Level</th>
+          <th class="grey" colspan="9">Chances in Dungeons (Dragon, Ice Golem, Fire Knight)</th>
+          <th rowspan="3"  class="rotatedcell grey">Energy</th>
+        </tr>
+        <tr>
+          <th class="grey" colspan="6">Rank (Stars)</th>
+          <th class="grey" colspan="3">Rarity</th>
+        </tr>
+        <tr>
+          <th>1★</th>
+          <th>2★</th>
+          <th>3★</th>
+          <th>4★</th>
+          <th>5★</th>
+          <th>6★</th>
+          <th>Rare</th>
+          <th>Epic</th>
+          <th>Legen</th>
+        </tr>
+        <tr>
+          <th>1</th>
+          <td>60.0%</td>
+          <td>40.0%</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>80.0%</td>
+          <td>19.00%</td>
+          <td>1.00%</td>
+          <td>8</td>
+        </tr>
+        <tr>
+          <th>2</th>
+          <td>30.0%</td>
+          <td>60.0%</td>
+          <td>10.0%</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>80.0%</td>
+          <td>19.00%</td>
+          <td>1.00%</td>
+          <td>8</td>
+        </tr>
+        <tr>
+          <th>3</th>
+          <td></td>
+          <td>45.0%</td>
+          <td>55.0%</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>80.0%</td>
+          <td>19.00%</td>
+          <td>1.00%</td>
+          <td>8</td>
+        </tr>
+        <tr>
+          <th>4</th>
+          <td></td>
+          <td>15.0%</td>
+          <td>60.0%</td>
+          <td>25.0%</td>
+          <td></td>
+          <td></td>
+          <td>80.0%</td>
+          <td>19.00%</td>
+          <td>1.00%</td>
+          <td>10</td>
+        </tr>
+        <tr>
+          <th>5</th>
+          <td></td>
+          <td></td>
+          <td>58.0%</td>
+          <td>42.0%</td>
+          <td></td>
+          <td></td>
+          <td>80.0%</td>
+          <td>19.00%</td>
+          <td>1.00%</td>
+          <td>10</td>
+        </tr>
+        <tr>
+          <th>6</th>
+          <td></td>
+          <td></td>
+          <td>50.0%</td>
+          <td>50.0%</td>
+          <td></td>
+          <td></td>
+          <td>79.0%</td>
+          <td>19.50%</td>
+          <td>1.50%</td>
+          <td>10</td>
+        </tr>
+        <tr>
+          <th>7</th>
+          <td></td>
+          <td></td>
+          <td>34.5%</td>
+          <td>53.0%</td>
+          <td>12.5%</td>
+          <td></td>
+          <td>79.0%</td>
+          <td>19.50%</td>
+          <td>1.50%</td>
+          <td>10</td>
+        </tr>
+        <tr>
+          <th>8</th>
+          <td></td>
+          <td></td>
+          <td>27.0%</td>
+          <td>55.0%</td>
+          <td>18.0%</td>
+          <td></td>
+          <td>79.0%</td>
+          <td>19.50%</td>
+          <td>1.50%</td>
+          <td>12</td>
+        </tr>
+        <tr>
+          <th>9</th>
+          <td></td>
+          <td></td>
+          <td>20.0%</td>
+          <td>57.0%</td>
+          <td>23.0%</td>
+          <td></td>
+          <td>79.0%</td>
+          <td>19.50%</td>
+          <td>1.50%</td>
+          <td>12</td>
+        </tr>
+        <tr style="mso-height-source:userset;height:15.75pt">
+          <th>10</th>
+          <td style="height:15.75pt;border-top:none"></td>
+          <td></td>
+          <td></td>
+          <td>69.0%</td>
+          <td>31.0%</td>
+          <td></td>
+          <td>79.0%</td>
+          <td>19.50%</td>
+          <td>1.50%</td>
+          <td>12</td>
+        </tr>
+        <tr>
+          <th>11</th>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>60.0%</td>
+          <td>40.0%</td>
+          <td></td>
+          <td>77.0%</td>
+          <td>20.00%</td>
+          <td>3.00%</td>
+          <td>12</td>
+        </tr>
+        <tr>
+          <th>12</th>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>55.0%</td>
+          <td>45.0%</td>
+          <td></td>
+          <td>77.0%</td>
+          <td>20.00%</td>
+          <td>3.00%</td>
+          <td>14</td>
+        </tr>
+        <tr>
+          <th>13</th>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>45.0%</td>
+          <td>50.0%</td>
+          <td>5.0%</td>
+          <td>77.0%</td>
+          <td>20.00%</td>
+          <td>3.00%</td>
+          <td>14</td>
+        </tr>
+        <tr>
+          <th>14</th>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>40.0%</td>
+          <td>54.0%</td>
+          <td>6.0%</td>
+          <td>77.0%</td>
+          <td>20.00%</td>
+          <td>3.00%</td>
+          <td>14</td>
+        </tr>
+        <tr>
+          <th>15</th>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>36.0%</td>
+          <td>56.5%</td>
+          <td>7.5%</td>
+          <td>77.0%</td>
+          <td>20.00%</td>
+          <td>3.00%</td>
+          <td>14</td>
+        </tr>
+        <tr>
+          <th>16</th>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>39.8%</td>
+          <td>52.0%</td>
+          <td>8.2%</td>
+          <td>70.0%</td>
+          <td>25.00%</td>
+          <td>5.00%</td>
+          <td>14</td>
+        </tr>
+        <tr>
+          <th>17</th>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>33.0%</td>
+          <td>56.6%</td>
+          <td>10.4%</td>
+          <td>70.0%</td>
+          <td>25.00%</td>
+          <td>5.00%</td>
+          <td>16</td>
+        </tr>
+        <tr>
+          <th>18</th>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>25.2%</td>
+          <td>61.6%</td>
+          <td>13.2%</td>
+          <td>70.0%</td>
+          <td>25.00%</td>
+          <td>5.00%</td>
+          <td>16</td>
+        </tr>
+        <tr>
+          <th>19</th>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>19.9%</td>
+          <td>62.3%</td>
+          <td>17.8%</td>
+          <td>70.0%</td>
+          <td>25.00%</td>
+          <td>5.00%</td>
+          <td>16</td>
+        </tr>
+        <tr>
+          <th>20</th>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>73.0%</td>
+          <td>27.0%</td>
+          <td>67.5%</td>
+          <td>25.00%</td>
+          <td>7.50%</td>
+          <td>16</td>
+        </tr>
+        <tr>
+          <th>21</th>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>72.0%</td>
+          <td>28.0%</td>
+          <td>62.0%</td>
+          <td>29.00%</td>
+          <td>9.00%</td>
+          <td>18</td>
+        </tr>
+        <tr>
+          <th>22</th>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>71.0%</td>
+          <td>29.0%</td>
+          <td>62.0%</td>
+          <td>28.00%</td>
+          <td>10.00%</td>
+          <td>18</td>
+        </tr>
+        <tr>
+          <th>23</th>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>70.0%</td>
+          <td>30.0%</td>
+          <td>57.5%</td>
+          <td>31.50%</td>
+          <td>11.00%</td>
+          <td>18</td>
+        </tr>
+        <tr>
+          <th>24</th>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>69.0%</td>
+          <td>31.0%</td>
+          <td>57.5%</td>
+          <td>30.50%</td>
+          <td>12.00%</td>
+          <td>18</td>
+        </tr>
+        <tr>
+          <th>25</th>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>68.0%</td>
+          <td>32.0%</td>
+          <td>55.0%</td>
+          <td>32.00%</td>
+          <td>13.00%</td>
+          <td>20</td>
+        </tr>
+      </table>
+      <div><a href="https://ayumilove.net/raid-shadow-legends-loot-table-and-drop-rates/">Loot Table Drop Rates</a> thanks to <a href="https://ayumilove.net/">AyumiLove</a></div>
+    </div>
+    <div id="tabs-shards">
+      <h2>Chances of Getting Champions from Shards</h2>
+      <p>What is the chance of getting
+        <select id="champ-rarity">
+          <option>a specific leggendary</option>
+          <option>a specific epic</option>
+          <option>a specific rare</option>
+          <option>a specific common</option>
+          <option>at least an epic</option>
+          <option>at least a rare</option>
+          <option>any leggendary</option>
+          <option>any epic</option>
+          <option>any rare</option>
+          <option>any common</option>
+        </select>
+        from a
+        <select id="shard-type">
+          <option>Sacred</option>
+          <option>Void</option>
+          <option>Ancient</option>
+          <option>Mystery</option>
+        </select>
+        Shard?
+      </p>
+    </div>
+    <div id="tabs-artifacts">
+      <h1>Not implemented yet.</h1>
+    </div>
+    <div id="tabs-accessories">
+      <h1>Not implemented yet.</h1>
+    </div>
+    <div id="tabs-potions">
+      <h1>Not implemented yet.</h1>
+    </div>
+    <div id="tabs-soulstones">
+      <h1>Not implemented yet.</h1>
+    </div>
+  </div>
+</body>
+</html>
+
+<!--
+    <p>I want
+      <select id="art-type-select">
+        <option value="any">ANY</option>
+        <option value="W">a weapon</option>
+        <option value="H">a helmet</option>
+        <option value="S">a shield</option>
+        <option value="G">gauntlets</option>
+        <option value="C">a chestplate</option>
+        <option value="B">boots</option>
+      </select>
+      artifact of rank
+      <select id="art-rank-select">
+        <option value="any" substats="any">ANY</option>
+        <option value="1">1★</option>
+        <option value="2">2★</option>
+        <option value="3">3★</option>
+        <option value="4">4★</option>
+        <option value="5">5★</option>
+        <option value="6">6★</option>
+      </select>
+      rarity
+      <select id="art-rank-select">
+        <option value="any" substats="any">ANY</option>
+        <option value="C" substats="0" class="common">Common</option>
+        <option value="U" substats="1" class="uncommon">Uncommon</option>
+        <option value="R" substats="2" class="rare">Rare</option>
+        <option value="E" substats="3" class="epic">Epic</option>
+        <option value="L" substats="4" class="leggo">Legendary</option>
+        <option value="M" substats="4" class="myth">Mythic</option>
+      </select>
+      of set
+      <select id="art-set-select">
+        <option value="any" dungeon="any">ANY</option>
+        <option value="life" dungeon="ice">Life</option>
+        <option value="offense" dungeon="ice">Offense</option>
+        <option value="defense" dungeon="ice">Defense</option>
+        <option value="critical" dungeon="ice">Critical Rate</option>
+        <option value="resistance" dungeon="ice">Resistance</option>
+        <option value="retaliation" dungeon="ice">Retaliation</option>
+        <option value="Reflex" dungeon="ice">Reflex</option>
+        <option value="cursed" dungeon="ice">Cursed</option>
+        <option value="provoke" dungeon="ice">Provoke</option>
+      </select>
+      with a primary stat of
+      <select id="prim-stat">
+        <option value="any" artifacts="any">ANY</option>
+        <option value="acc" artifacts="C">ACC</option>
+        <option value="atk" artifacts="WGCB">ATK</option>
+        <option value="atkp" artifacts="GCB">ATK %</option>
+        <option value="cdmg" artifacts="G">C.Dmg</option>
+        <option value="crte" artifacts="G">C.Rte</option>
+        <option value="def" artifacts="SGCB">DEF</option>
+        <option value="defp" artifacts="GCB">DEF %</option>
+        <option value="hp" artifacts="HGCB">HP</option>
+        <option value="hpp" artifacts="GCB">HP %</option>
+        <option value="res" artifacts="C">RES</option>
+        <option value="spd" artifacts="B">SPD</option>
+      </select>,
+      and 2<sup>nd</sup> stat of
+      <select id="prim-stat">
+        <option value="any" dungeon="any">ANY</option>
+        <option value="acc" dungeon="C">ACC</option>
+        <option value="atk" dungeon="WHSGCB">ATK</option>
+        <option value="atkp" dungeon="WHSGCB">ATK %</option>
+        <option value="cdmg" dungeon="G">C.Dmg</option>
+        <option value="crte" dungeon="G">C.Rte</option>
+        <option value="def" dungeon="WHSGCB">DEF</option>
+        <option value="defp" dungeon="WHSGCB">DEF %</option>
+        <option value="hp" dungeon="WHSGCB">HP</option>
+        <option value="hpp" dungeon="WHSGCB">HP %</option>
+        <option value="res" dungeon="C">RES</option>
+        <option value="spd" dungeon="B">SPD</option>
+      </select>
+    </p>
+    <fieldset>
+      <legend>Dungeon</legend>
+      <label class="nowrap" for="ice">Ice Golem<input type="checkbox" name="ice" id="ice"></label>
+      <label class="nowrap" for="dragon">Dragon<input type="checkbox" name="dragon" id="dragon"></label>
+      <label class="nowrap" for="fire">Fire Knight<input type="checkbox" name="fire" id="fire"></label>
+    </fieldset>
+    <fieldset>
+      <legend>Set</legend>
+      <label class="nowrap" for="set-life">Life<input type="checkbox" name="set-life" id="set-life"></label>
+      <label class="nowrap" for="set-offense">Offense<input type="checkbox" name="set-offense" id="set-offense"></label>
+      <label class="nowrap" for="set-defense">Defense<input type="checkbox" name="set-defense" id="set-defense"></label>
+      <label class="nowrap" for="set-critical">Crit Rate<input type="checkbox" name="set-critical" id="set-critical"></label>
+      <label class="nowrap" for="set-resistance">Resistance<input type="checkbox" name="set-resistance" id="set-resistance"></label>
+      <label class="nowrap" for="set-retaliation">Retaliation<input type="checkbox" name="set-retaliation" id="set-retaliation"></label>
+      <label class="nowrap" for="set-reflex">Reflex<input type="checkbox" name="set-reflex" id="set-reflex"></label>
+      <label class="nowrap" for="set-cursed">Cursed<input type="checkbox" name="set-cursed" id="set-cursed"></label>
+      <label class="nowrap" for="set-provoke">Provoke<input type="checkbox" name="set-provoke" id="set-provoke"></label>
+    </fieldset>
+    <fieldset>
+      <legend>Primary Stat</legend>
+      <label class="nowrap" for="primary-any">ANY<input type="checkbox" name="primary-any" id="primary-any" targets="WHSGCB"></label>
+      <label class="nowrap" for="primary-atk">ATK<input type="checkbox" name="primary-atk" id="primary-atk" targets="WHSGCB"></label>
+      <label class="nowrap" for="primary-atkp">ATK %<input type="checkbox" name="primary-atkp" id="primary-atkp" targets="WHSGCB"></label>
+      <label class="nowrap" for="primary-hp">HP<input type="checkbox" name="primary-hp" id="primary-hp" targets="WHSGCB"></label>
+      <label class="nowrap" for="primary-hpp">HP %<input type="checkbox" name="primary-hpp" id="primary-hpp" targets="WHSGCB"></label>
+      <label class="nowrap" for="primary-def">DEF<input type="checkbox" name="primary-def" id="primary-def" targets="WHSGCB"></label>
+      <label class="nowrap" for="primary-defp">DEF %<input type="checkbox" name="primary-defp" id="primary-defp" targets="WHSGCB"></label>
+    </fieldset>
+    <fieldset>
+      <legend>Secondary Stats</legend>
+      <label class="nowrap" for="secondary-any">ANY<input type="checkbox" name="secondary-any" id="secondary-any" targets="WHSGCB"></label>
+      <label class="nowrap" for="secondary-atk">ATK<input type="checkbox" name="secondary-atk" id="secondary-atk" targets="WHSGCB"></label>
+      <label class="nowrap" for="secondary-atkp">ATK %<input type="checkbox" name="secondary-atkp" id="secondary-atkp" targets="WHSGCB"></label>
+      <label class="nowrap" for="secondary-hp">HP<input type="checkbox" name="secondary-hp" id="secondary-hp" targets="WHSGCB"></label>
+      <label class="nowrap" for="secondary-hpp">HP %<input type="checkbox" name="secondary-hpp" id="secondary-hpp" targets="WHSGCB"></label>
+      <label class="nowrap" for="secondary-def">DEF<input type="checkbox" name="secondary-def" id="secondary-def" targets="WHSGCB"></label>
+      <label class="nowrap" for="secondary-defp">DEF %<input type="checkbox" name="secondary-defp" id="secondary-defp" targets="WHSGCB"></label>
+    </fieldset>
+
+    -->
+
+
+    <!--
+        <h2>Chances of Getting Artifacts from Dungeons</h2>
+        <div>
+          <p>Based on the selections, you have the following probabilities of getting ...</p>
+          <td rowspan="3">
+            <table class="tdefault">
+              <colgroup>
+                <col class="odd">
+                <col class="even">
+                <col class="odd">
+                <col class="even">
+                <col class="odd">
+                <col class="even">
+                <col class="odd">
+                <col class="even">
+                <col class="odd">
+                <col class="even">
+                <col class="odd">
+                <col class="even">
+                <col class="odd">
+                <col class="even">
+                <col class="odd">
+                <col class="even">
+                <col class="odd">
+                <col class="even">
+                <col class="odd">
+                <col class="even">
+                <col class="odd">
+              </colgroup>
+              <tr>
+                <th class="grey" rowspan="2">At least #<br />Artifacts</th>
+                <th class="grey" colspan="14">Number of runs:</th>
+              </tr>
+              <tr>
+                <th>1</th>
+                <th>2</th>
+                <th>3</th>
+                <th>4</th>
+                <th>5</th>
+                <th>10</th>
+                <th>25</th>
+                <th>50</th>
+                <th>75</th>
+                <th>100</th>
+                <th>250</th>
+                <th>500</th>
+                <th>750</th>
+                <th>1000</th>
+              </tr>
+              <tr id="row-1">
+                <th class="grey">1</th>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr id="row-2">
+                <th class="grey">2</th>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr id="row-3">
+                <th class="grey">3</th>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr id="row-4">
+                <th class="grey">4</th>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr id="row-5">
+                <th class="grey">5</th>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr id="row-6"><th class="grey">6</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+              <tr id="row-12"><th class="grey">12</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+              <tr id="row-18"><th class="grey">18</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+              <tr id="row-24"><th class="grey">24</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            </table>
+
+        </div>
+        <fieldset>
+          <legend>Difficulty</legend>
+          <label class="nowrap" for="art-diff-norm">Normal<input type="radio" name="art-diff" id="art-diff-norm" value="normal" checked></label>
+          <label class="nowrap" for="art-diff-hard">Hard<input type="radio" name="art-diff" id="art-diff-hard" value="hard"></label>
+        </fieldset>
+        <fieldset>
+          <legend>Type</legend>
+          <label class="nowrap" for="art-any">Any<input type="radio" name="art-type" id="art-any" value="any" checked></label>
+          <label class="nowrap" for="art-weapon">Weapon<input type="radio" name="art-type" id="art-weapon" value="W"></label>
+          <label class="nowrap" for="art-helmet">Helmet<input type="radio" name="art-type" id="art-helmet" value="H"></label>
+          <label class="nowrap" for="art-shield">Shield<input type="radio" name="art-type" id="art-shield" value="S"></label>
+          <label class="nowrap" for="art-gauntlets">Gauntlets<input type="radio" name="art-type" id="art-gauntlets" value="G"></label>
+          <label class="nowrap" for="art-chestplate">Chestplate<input type="radio" name="art-type" id="art-chestplate" value="C"></label>
+          <label class="nowrap" for="art-boots">Boots<input type="radio" name="art-type" id="art-boots" value="B"></label>
+        </fieldset>
+        <fieldset>
+          <legend>Rank</legend>
+          <label class="nowrap" for="art-rank-any">Any<input type="radio" name="art-rank" id="art-rank-any" value="any" checked></label>
+          <label class="nowrap" for="art-rank-1">1★<input type="radio" name="art-rank" id="art-rank-1" value="1"></label>
+          <label class="nowrap" for="art-rank-2">2★<input type="radio" name="art-rank" id="art-rank-2" value="2"></label>
+          <label class="nowrap" for="art-rank-3">3★<input type="radio" name="art-rank" id="art-rank-3" value="3"></label>
+          <label class="nowrap" for="art-rank-4">4★<input type="radio" name="art-rank" id="art-rank-4" value="4"></label>
+          <label class="nowrap" for="art-rank-5">5★<input type="radio" name="art-rank" id="art-rank-5" value="5"></label>
+          <label class="nowrap" for="art-rank-6">6★<input type="radio" name="art-rank" id="art-rank-6" value="6"></label>
+        </fieldset>
+        <fieldset>
+          <legend>Rarity</legend>
+          <label class="nowrap" for="art-rarity-any">Any<input type="radio" name="art-rarity" id="art-rarity-any" value="any" checked></label>
+          <label class="nowrap" for="art-rarity-common" class="common">Common<input type="radio" name="art-rarity" id="art-rarity-common" value="0"></label>
+          <label class="nowrap" for="art-rarity-uncommon" class="uncommon">Uncommon<input type="radio" name="art-rarity" id="art-rarity-uncommon" value="0"></label>
+          <label class="nowrap" for="art-rarity-rare">Rare<input type="radio" name="art-rarity" id="art-rarity-rare" value="0"></label>
+          <label class="nowrap" for="art-rarity-epic">Epic<input type="radio" name="art-rarity" id="art-rarity-epic" value="0"></label>
+          <label class="nowrap" for="art-rarity-legendary">Legendary<input type="radio" name="art-rarity" id="art-rarity-legendary" value="0"></label>
+          <label class="nowrap" for="art-rarity-mythic">Mythic<input type="radio" name="art-rarity" id="art-rarity-mythic" value="0"></label>
+        </fieldset>
+        <fieldset>
+          <legend>Set</legend>
+          <label class="nowrap" for="art-set-any">Any<input type="radio" name="art-set" id="art-set-any" value="any" dungeon="any" checked></label>
+          <label class="nowrap" for="art-set-accuracy">Accuracy<input type="radio" name="art-set" id="art-set-accuracy" value="accuracy" dungeon="dragon"></label>
+          <label class="nowrap" for="art-set-avenging">Avenging<input type="radio" name="art-set" id="art-set-avenging" value="avenging" dungeon="dragon"></label>
+          <label class="nowrap" for="art-set-crit-damage">Crit Dmg<input type="radio" name="art-set" id="art-set-crit-damage" value="crit-damage" dungeon="fire"></label>
+          <label class="nowrap" for="art-set-critical">Crit Rate<input type="radio" name="art-set" id="art-set-critical" value="critical" dungeon="ice"></label>
+          <label class="nowrap" for="art-set-curing">Curing<input type="radio" name="art-set" id="art-set-curing" value="curing" dungeon="fire"></label>
+          <label class="nowrap" for="art-set-cursed">Cursed<input type="radio" name="art-set" id="art-set-cursed" value="cursed" dungeon="ice"></label>
+          <label class="nowrap" for="art-set-daze">Daze<input type="radio" name="art-set" id="art-set-daze" value="daze" dungeon="dragon"></label>
+          <label class="nowrap" for="art-set-defense">Defense<input type="radio" name="art-set" id="art-set-defense" value="defense" dungeon="ice"></label>
+          <label class="nowrap" for="art-set-destroy">Destroy<input type="radio" name="art-set" id="art-set-destroy" value="destroy" dungeon="dragon"></label>
+          <label class="nowrap" for="art-set-frenzy">Frenzy<input type="radio" name="art-set" id="art-set-frenzy" value="frenzy" dungeon="fire"></label>
+          <label class="nowrap" for="art-set-frost">Frost<input type="radio" name="art-set" id="art-set-frost" value="frost" dungeon="dragon"></label>
+          <label class="nowrap" for="art-set-fury">Fury<input type="radio" name="art-set" id="art-set-fury" value="fury" dungeon="fire"></label>
+          <label class="nowrap" for="art-set-immunity">Immunity<input type="radio" name="art-set" id="art-set-immunity" value="immunity" dungeon="fire"></label>
+          <label class="nowrap" for="art-set-life">Life<input type="radio" name="art-set" id="art-set-life" value="life" dungeon="ice"></label>
+          <label class="nowrap" for="art-set-lifesteal">Lifesteal<input type="radio" name="art-set" id="art-set-lifesteal" value="lifesteal" dungeon="dragon"></label>
+          <label class="nowrap" for="art-set-offense">Offense<input type="radio" name="art-set" id="art-set-offense" value="offense" dungeon="ice"></label>
+          <label class="nowrap" for="art-set-provoke">Provoke<input type="radio" name="art-set" id="art-set-provoke" value="provoke" dungeon="ice"></label>
+          <label class="nowrap" for="art-set-reflex">Reflex<input type="radio" name="art-set" id="art-set-reflex" value="reflex" dungeon="ice"></label>
+          <label class="nowrap" for="art-set-regeneration">Regenerat<input type="radio" name="art-set" id="art-set-regeneration" value="regeneration" dungeon="fire"></label>
+          <label class="nowrap" for="art-set-resistance">Resist<input type="radio" name="art-set" id="art-set-resistance" value="resistance" dungeon="ice"></label>
+          <label class="nowrap" for="art-set-retaliation">Retaliation<input type="radio" name="art-set" id="art-set-retaliation" value="retaliation" dungeon="ice"></label>
+          <label class="nowrap" for="art-set-savage">Savage<input type="radio" name="art-set" id="art-set-savage" value="savage" dungeon="fire"></label>
+          <label class="nowrap" for="art-set-shield">Shield<input type="radio" name="art-set" id="art-set-shield" value="shield" dungeon="fire"></label>
+          <label class="nowrap" for="art-set-speed">Speed<input type="radio" name="art-set" id="art-set-speed" value="speed" dungeon="dragon"></label>
+          <label class="nowrap" for="art-set-stalward">Stalward<input type="radio" name="art-set" id="art-set-stalward" value="stalward" dungeon="dragon"></label>
+          <label class="nowrap" for="art-set-stun">Stun<input type="radio" name="art-set" id="art-set-stun" value="stun" dungeon="fire"></label>
+          <label class="nowrap" for="art-set-toxic">Toxic<input type="radio" name="art-set" id="art-set-toxic" value="toxic" dungeon="dragon"></label>
+        </fieldset>
+        <fieldset>
+          <legend>Set Chance Multiplier</legend>
+          <label class="nowrap" for="art-multiplier-1">None<input type="radio" name="art-multiplier" id="art-multiplier-1" value="1" checked></label>
+          <label class="nowrap" for="art-multiplier-2">2&times;<input type="radio" name="art-multiplier" id="art-multiplier-2" value="2"></label>
+          <label class="nowrap" for="art-multiplier-3">3&times;<input type="radio" name="art-multiplier" id="art-multiplier-3" value="3"></label>
+          <label class="nowrap" for="art-multiplier-10">10&times;<input type="radio" name="art-multiplier" id="art-multiplier-10" value="10"></label>
+        </fieldset>
+        <fieldset>
+          <legend>Primary Stat</legend>
+          <label class="nowrap" for="art-prim-any">ANY<input type="radio" name="art-prim" id="art-prim-any" value="any" artifacts="any" checked></label>
+          <label class="nowrap" for="art-prim-acc">ACC<input type="radio" name="art-prim" id="art-prim-acc" value="acc" artifacts="C"></label>
+          <label class="nowrap" for="art-prim-atk">ATK<input type="radio" name="art-prim" id="art-prim-atk" value="atk" artifacts="WGCB"></label>
+          <label class="nowrap" for="art-prim-atkp">ATK %<input type="radio" name="art-prim" id="art-prim-atkp" value="atkp" artifacts="GCB"></label>
+          <label class="nowrap" for="art-prim-cdmg">C.Dmg<input type="radio" name="art-prim" id="art-prim-cdmg" value="cdmg" artifacts="G"></label>
+          <label class="nowrap" for="art-prim-crte">C.Rte<input type="radio" name="art-prim" id="art-prim-crte" value="crte" artifacts="G"></label>
+          <label class="nowrap" for="art-prim-def">DEF<input type="radio" name="art-prim" id="art-prim-def" value="def" artifacts="SGCB"></label>
+          <label class="nowrap" for="art-prim-defp">DEF %<input type="radio" name="art-prim" id="art-prim-defp" value="defp" artifacts="GCB"></label>
+          <label class="nowrap" for="art-prim-hp">HP<input type="radio" name="art-prim" id="art-prim-hp" value="hp" artifacts="HGCB"></label>
+          <label class="nowrap" for="art-prim-hpp">HP %<input type="radio" name="art-prim" id="art-prim-hpp" value="hpp" artifacts="GCB"></label>
+          <label class="nowrap" for="art-prim-res">RES<input type="radio" name="art-prim" id="art-prim-res" value="res" artifacts="C"></label>
+          <label class="nowrap" for="art-prim-spd">SPD<input type="radio" name="art-prim" id="art-prim-spd" value="spd" artifacts="B"></label>
+        </fieldset>
+        <fieldset>
+          <legend>2<sup>nd</sup> Stat</legend>
+          <label class="nowrap" for="art-sec-any">ANY<input type="radio" name="art-sec" id="art-sec-any" value="any" artifacts="any" checked></label>
+          <label class="nowrap" for="art-sec-acc">ACC<input type="radio" name="art-sec" id="art-sec-acc" value="acc" artifacts="C"></label>
+          <label class="nowrap" for="art-sec-atk">ATK<input type="radio" name="art-sec" id="art-sec-atk" value="atk" artifacts="WGCB"></label>
+          <label class="nowrap" for="art-sec-atkp">ATK %<input type="radio" name="art-sec" id="art-sec-atkp" value="atkp" artifacts="GCB"></label>
+          <label class="nowrap" for="art-sec-cdmg">C.Dmg<input type="radio" name="art-sec" id="art-sec-cdmg" value="cdmg" artifacts="G"></label>
+          <label class="nowrap" for="art-sec-crte">C.Rte<input type="radio" name="art-sec" id="art-sec-crte" value="crte" artifacts="G"></label>
+          <label class="nowrap" for="art-sec-def">DEF<input type="radio" name="art-sec" id="art-sec-def" value="def" artifacts="SGCB"></label>
+          <label class="nowrap" for="art-sec-defp">DEF %<input type="radio" name="art-sec" id="art-sec-defp" value="defp" artifacts="GCB"></label>
+          <label class="nowrap" for="art-sec-hp">HP<input type="radio" name="art-sec" id="art-sec-hp" value="hp" artifacts="HGCB"></label>
+          <label class="nowrap" for="art-sec-hpp">HP %<input type="radio" name="art-sec" id="art-sec-hpp" value="hpp" artifacts="GCB"></label>
+          <label class="nowrap" for="art-sec-res">RES<input type="radio" name="art-sec" id="art-sec-res" value="res" artifacts="C"></label>
+          <label class="nowrap" for="art-sec-spd">SPD<input type="radio" name="art-sec" id="art-sec-spd" value="spd" artifacts="B"></label>
+        </fieldset>
+        <table border="1">
+          <tr>
+            <td style="vertical-align:top;">
+              <table class="tdefault" cellpadding="0" id="dungeon-info-table">
+                <caption>General Dungeon Information</caption>
+                <tr>
+                  <td>Number of sets per dungeon</td>
+                  <td id="sets-per-dungeon">9</td>
+                </tr>
+                <tr>
+                  <td>Chance of getting a specific set (e.g., lifesteal)</td>
+                  <td id="specific-set-chance">11.1%</td>
+                </tr>
+                <tr>
+                  <td>Number of artifact types</td>
+                  <td id="num-artifact-types">6</td>
+                </tr>
+                <tr>
+                  <td>Chance of getting a specific type (e.g., helmet)</td>
+                  <td id="specific-type-chance">16.7%</td>
+                </tr>
+              </table>
+            </td>
+            <td rowspan="3">
+              <table class="tdefault">
+                <colgroup>
+                  <col class="odd">
+                  <col class="even">
+                  <col class="odd">
+                  <col class="even">
+                  <col class="odd">
+                  <col class="even">
+                  <col class="odd">
+                  <col class="rare">
+                  <col class="epic">
+                  <col class="leggo">
+                  <col class="odd">
+                </colgroup>
+                <tr>
+                  <th class="grey" colspan="11">Chances in Dungeons (Dragon, Ice Golem, Fire Knight)</th>
+                </tr>
+                <tr>
+                  <th class="grey" colspan="6">Stars</th>
+                  <th rowspan="2" class="rotatedcell grey">Level</th>
+                  <th class="grey" colspan="3">Rarity</th>
+                  <th rowspan="2"  class="rotatedcell grey">Enrg</th>
+                </tr>
+                <tr>
+                  <th>1★</th>
+                  <th>2★</th>
+                  <th>3★</th>
+                  <th>4★</th>
+                  <th>5★</th>
+                  <th>6★</th>
+                  <th>Rare</th>
+                  <th>Epic</th>
+                  <th>Legen</th>
+                </tr>
+                <tr>
+                  <td style="height:15.0pt;border-top:
+                             none">60.0%</td>
+                             <td>40.0%</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>1</td>
+            <td>80.0%</td>
+            <td>19.00%</td>
+            <td>1.00%</td>
+            <td>8</td>
+          </tr>
+          <tr>
+            <td style="height:15.0pt;border-top:
+                       none">30.0%</td>
+                  <td>60.0%</td>
+                  <td>10.0%</td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td>2</td>
+                  <td>80.0%</td>
+                  <td>19.00%</td>
+                  <td>1.00%</td>
+                  <td>8</td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td>45.0%</td>
+                  <td>55.0%</td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td>3</td>
+                  <td>80.0%</td>
+                  <td>19.00%</td>
+                  <td>1.00%</td>
+                  <td>8</td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td>15.0%</td>
+                  <td>60.0%</td>
+                  <td>25.0%</td>
+                  <td></td>
+                  <td></td>
+                  <td>4</td>
+                  <td>80.0%</td>
+                  <td>19.00%</td>
+                  <td>1.00%</td>
+                  <td>10</td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td>58.0%</td>
+                  <td>42.0%</td>
+                  <td></td>
+                  <td></td>
+                  <td>5</td>
+                  <td>80.0%</td>
+                  <td>19.00%</td>
+                  <td>1.00%</td>
+                  <td>10</td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td>50.0%</td>
+                  <td>50.0%</td>
+                  <td></td>
+                  <td></td>
+                  <td>6</td>
+                  <td>79.0%</td>
+                  <td>19.50%</td>
+                  <td>1.50%</td>
+                  <td>10</td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td>34.5%</td>
+                  <td>53.0%</td>
+                  <td>12.5%</td>
+                  <td></td>
+                  <td>7</td>
+                  <td>79.0%</td>
+                  <td>19.50%</td>
+                  <td>1.50%</td>
+                  <td>10</td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td>27.0%</td>
+                  <td>55.0%</td>
+                  <td>18.0%</td>
+                  <td></td>
+                  <td>8</td>
+                  <td>79.0%</td>
+                  <td>19.50%</td>
+                  <td>1.50%</td>
+                  <td>12</td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td>20.0%</td>
+                  <td>57.0%</td>
+                  <td>23.0%</td>
+                  <td></td>
+                  <td>9</td>
+                  <td>79.0%</td>
+                  <td>19.50%</td>
+                  <td>1.50%</td>
+                  <td>12</td>
+                </tr>
+                <tr style="mso-height-source:userset;height:15.75pt">
+                  <td style="height:15.75pt;border-top:none"></td>
+                  <td></td>
+                  <td></td>
+                  <td>69.0%</td>
+                  <td>31.0%</td>
+                  <td></td>
+                  <td>10</td>
+                  <td>79.0%</td>
+                  <td>19.50%</td>
+                  <td>1.50%</td>
+                  <td>12</td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td>60.0%</td>
+                  <td>40.0%</td>
+                  <td></td>
+                  <td>11</td>
+                  <td>77.0%</td>
+                  <td>20.00%</td>
+                  <td>3.00%</td>
+                  <td>12</td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td>55.0%</td>
+                  <td>45.0%</td>
+                  <td></td>
+                  <td>12</td>
+                  <td>77.0%</td>
+                  <td>20.00%</td>
+                  <td>3.00%</td>
+                  <td>14</td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td>45.0%</td>
+                  <td>50.0%</td>
+                  <td>5.0%</td>
+                  <td>13</td>
+                  <td>77.0%</td>
+                  <td>20.00%</td>
+                  <td>3.00%</td>
+                  <td>14</td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td>40.0%</td>
+                  <td>54.0%</td>
+                  <td>6.0%</td>
+                  <td>14</td>
+                  <td>77.0%</td>
+                  <td>20.00%</td>
+                  <td>3.00%</td>
+                  <td>14</td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td>36.0%</td>
+                  <td>56.5%</td>
+                  <td>7.5%</td>
+                  <td>15</td>
+                  <td>77.0%</td>
+                  <td>20.00%</td>
+                  <td>3.00%</td>
+                  <td>14</td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td>39.8%</td>
+                  <td>52.0%</td>
+                  <td>8.2%</td>
+                  <td>16</td>
+                  <td>70.0%</td>
+                  <td>25.00%</td>
+                  <td>5.00%</td>
+                  <td>14</td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td>33.0%</td>
+                  <td>56.6%</td>
+                  <td>10.4%</td>
+                  <td>17</td>
+                  <td>70.0%</td>
+                  <td>25.00%</td>
+                  <td>5.00%</td>
+                  <td>16</td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td>25.2%</td>
+                  <td>61.6%</td>
+                  <td>13.2%</td>
+                  <td>18</td>
+                  <td>70.0%</td>
+                  <td>25.00%</td>
+                  <td>5.00%</td>
+                  <td>16</td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td>19.9%</td>
+                  <td>62.3%</td>
+                  <td>17.8%</td>
+                  <td>19</td>
+                  <td>70.0%</td>
+                  <td>25.00%</td>
+                  <td>5.00%</td>
+                  <td>16</td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td>73.0%</td>
+                  <td>27.0%</td>
+                  <td>20</td>
+                  <td>67.5%</td>
+                  <td>25.00%</td>
+                  <td>7.50%</td>
+                  <td>16</td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td>72.0%</td>
+                  <td>28.0%</td>
+                  <td>21</td>
+                  <td>62.0%</td>
+                  <td>29.00%</td>
+                  <td>9.00%</td>
+                  <td>18</td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td>71.0%</td>
+                  <td>29.0%</td>
+                  <td>22</td>
+                  <td>62.0%</td>
+                  <td>28.00%</td>
+                  <td>10.00%</td>
+                  <td>18</td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td>70.0%</td>
+                  <td>30.0%</td>
+                  <td>23</td>
+                  <td>57.5%</td>
+                  <td>31.50%</td>
+                  <td>11.00%</td>
+                  <td>18</td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td>69.0%</td>
+                  <td>31.0%</td>
+                  <td>24</td>
+                  <td>57.5%</td>
+                  <td>30.50%</td>
+                  <td>12.00%</td>
+                  <td>18</td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          <tr>
+            <td style="vertical-align:top;">
+              <table class="tdefault" cellpadding="0" id="primary-stats-table">
+                <caption>Chances for Specific Primary Stats</caption>
+                <tr>
+                  <td class="blank"></td>
+                  <td class="blank"></td>
+                  <th class="even" title="Number of primary stats available for this type of artifact.">Num</th>
+                  <th class="even" title="The chance of getting a specific stat.">Chance</th>
+                </tr>
+                <tr class="odd">
+                  <th title="Type of Artifact" rowspan="6" class="rotatedcell grey<">Type of Artifact</th>
+                      <th>Helmet</th>
+<td>1</td>
+<td>100.0%</td>
+</tr>
+<tr class="even">
+  <th>Chestplate</th>
+  <td>8</td>
+  <td>12.5%</td>
+</tr>
+<tr class="odd">
+  <th>Gauntlets</th>
+  <td>8</td>
+  <td>12.5%</td>
+</tr>
+<tr class="even">
+  <th>Boots</th>
+  <td>7</td>
+  <td>14.3%</td>
+</tr>
+<tr class="odd">
+  <th>Weapon</th>
+  <td>1</td>
+  <td>100.0%</td>
+</tr>
+<tr class="even">
+  <th>Shield</th>
+  <td>1</td>
+  <td>100.0%</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr><td></td></tr>
+</table>
+</div>
+</div>
+Stuff goes here.
+<a href="" title="Test tooltip">test</a>
+-->
