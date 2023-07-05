@@ -117,7 +117,7 @@ function lumpInit() {
         Rare:[80.0,80.0,80.0,80.0,80.0,79.0,79.0,79.0,79.0,79.0,77.0,77.0,77.0,77.0,77.0,70.0,70.0,70.0,70.0,67.5,62.0,62.0,57.5,57.5,55],
         Epic:[19.00,19.00,19.00,19.00,19.00,19.50,19.50,19.50,19.50,19.50,20.00,20.00,20.00,20.00,20.00,25.00,25.00,25.00,25.00,25.00,29.00,28.00,31.50,30.50,32],
         Legendary:[1.00,1.00,1.00,1.00,1.00,1.50,1.50,1.50,1.50,1.50,3.00,3.00,3.00,3.00,3.00,5.00,5.00,5.00,5.00,7.50,9.00,10.00,11.00,12.00,13],
-        Mythic:[],
+        Mythic:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
         any:[],
         'Rare+':[],
         'Epic+':[],
@@ -217,6 +217,16 @@ function lumpGetSelVal(what) {
     return [val ? val : 'any', numAvail];
 }
 
+function lumpOneAlert(what) {
+    if(! window.lump.stopalerts ) {
+        alert(what);
+        console.log(`Alert: ${what}`);
+    } else {
+        console.log(`Alert (not alerted): ${what}`);
+    }
+    window.lump.stopalerts = true;
+}
+
 function lumpUpdateProbsSelect(what) {
     switch (what.id) {
     case "art-type-select":
@@ -252,7 +262,6 @@ function lumpUpdateProbsSelect(what) {
         break;
     default:
         console.log(['lumpUpdateProbsSelect ERROR',what, what.id, what.value]);
-        alert("Doh!");
         break;
     }
     // Fill in the table...
@@ -287,7 +296,48 @@ function lumpUpdateProbsSelect(what) {
         // (one less than 11); however, if the primary has more than one option,
         // then the probability of getting a SPECIFIC substat that was not the
         // primary is the probability of getting one of the primaries
-        var substatProb = substat == 'any' || numprimary == 1 ? 1 : 1/numsubstat;
+        var substatProb = 0;
+        var p1 = 1/numsubstat;
+        var p2 = p1 + (1/(numsubstat - 1));
+        var p3 = p2 + (1/(numsubstat - 2));
+        var p4 = p3 + (1/(numsubstat - 3));
+        var pRare = window.lump.dun.probs.Normal.rarity["Rare"][level];
+        var pEpic = window.lump.dun.probs.Normal.rarity["Epic"][level];
+        var pLegendary = window.lump.dun.probs.Normal.rarity["Legendary"][level];
+        var pMythic = window.lump.dun.probs.Normal.rarity["Mythic"][level];
+        if(substat == 'any') {
+            substatProb = 1;
+        } else {
+            switch(rarity) {
+            case "Legendary":
+            case "Mythic":
+                substatProb += p4;
+                break;
+            case "Epic":
+                substatProb +=  p3;
+                break;
+            case "Rare":
+                substatProb += p2;
+                break;
+            case "any":
+            case "Rare or higher":
+            case "Rare+":
+                substatProb += pRare * p2;
+            case "Epic or higher":
+            case "Epic+":
+                substatProb +=  pEpic * p3;
+            case "Legendary or higher":
+            case "Legendary+":
+                substatProb +=  pLegendary * p4;
+                substatProb +=  pMythic * p4;
+                break;
+            default:
+                lumpOneAlert(`There was a problem. Please report: Undetected Rarity ="${rarity}". Cannot continue.`);
+                break;
+            }
+        }
+        // console.log({func:'lumpUpdateProbsSelect',substat:substat,rarity:window.lump.dun.probs.Normal.rarity,numsubstat:numsubstat,substatProb:substatProb,level:level,what:what,pRare:pRare,pEpic:pEpic,pLegendary:pLegendary,pMythic:pMythic});
+        // var substatProb = substat == 'any' || numprimary == 1 ? 1 : 1/numsubstat;
         var prob = artProb * typeProb * rankProb * rarityProb * setProb * primaryProb * substatProb;
         probPerLevel[level] = prob;
         html += `<tr style="text-align:right">`;

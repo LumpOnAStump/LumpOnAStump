@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Permissions-Policy" content="interest-cohort=()">
     <title>Lumpy Stuff</title>
     <link href="css/tables.css" rel="stylesheet">
     <link href="jq/jquery-ui.css" rel="stylesheet">
@@ -675,7 +676,7 @@
         <p>Assume that \(p_{sub}\) is the probability of getting a specific stat (e.g., HP) as one of the possible substats and that \( n \) is the number of possible stats available and \( i \) is the number of possible "slots" for a substat to be rolled for a given rarity. Then, the probability that HP will show up as one of ths 4 possible substats (Legendary and Mythic have 4 slots) is given by:</p>
         <p style="text-align:center">\(p_{sub}=\frac{1}{n}+\frac{1}{n-1}+\frac{1}{n-2}+ ... \frac{1}{n-i}=\sum_{j=0}^i{\frac{1}{n-i}}\)</p>
         <p>With this, then, we can also calculate the "rarity or higher" by adding the probabilities up, just like for rank or higher and rarity or higher above.</p>
-        <p>HOWEVER, in the case that the primary stat is "any" but a substat is specified, the the probability needs to take into account that if, for example, "HP" is a target substat but primary is "any" that the case in which "HP" is rolled as a primary is adequately accounted for. Since we can't know if the user would be happy with it as a primary or only wants it as a substat, we don't bother calculating this case. Maybe someday I'll catch this case and either deal with it or throw up an alert.</p>
+        <p>HOWEVER, in the case that the primary stat is "any" but a substat is specified, then the probability needs to take into account that if, for example, "HP" is a target substat but primary is "any" that the case in which "HP" is rolled as a primary is adequately accounted for. Since we can't know if the user would be happy with it as a primary or only wants it as a substat, we don't bother calculating this case. Maybe someday I'll catch this case and either deal with it or throw up an alert.</p>
       </div>
     </div>
     <div id="tabs-shards">
